@@ -20,7 +20,14 @@ export const fetchWithAuth = (apiKey: string): Fetch => {
     let headers = new HeadersConstructor(init?.headers);
 
     if (!headers.has("Authorization")) {
-      headers.set("Authorization", `Token ${apiKey}`);
+      // Customized by mmhmm to allow us to pass our access token
+      // in the Authorization header using the standard "Bearer" prefix
+      // instead of Deepgram's "Token" prefix.
+      if (apiKey.startsWith("Bearer ")) {
+        headers.set("Authorization", apiKey);
+      } else {
+        headers.set("Authorization", `Token ${apiKey}`);
+      }
     }
 
     return fetch(input, { ...init, headers });
