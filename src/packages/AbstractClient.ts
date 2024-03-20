@@ -50,11 +50,14 @@ export abstract class AbstractClient {
       /**
        * Prevent client using a real API key when using a proxy configuration.
        */
-      if (this.key !== "proxy") {
-        throw new DeepgramError(
-          `Do not attempt to pass any other API key than the string "proxy" when making proxied REST requests. Please ensure your proxy application is responsible for writing our API key to the Authorization header.`
-        );
-      }
+
+//       Removed by mmhmm so that we can pass our own ID token to our proxy in the Authorization header
+//       Our ID token will be replaced by theirs before proxying the request
+//       if (this.key !== "proxy") {
+//         throw new DeepgramError(
+//           `Do not attempt to pass any other API key than the string "proxy" when making proxied REST requests. Please ensure your proxy application is responsible for writing our API key to the Authorization header.`
+//         );
+//       }
 
       proxyUrlString = this.options.restProxy.url;
 
@@ -78,7 +81,11 @@ export abstract class AbstractClient {
       url = "https://" + url;
     }
 
-    return new URL(stripTrailingSlash(url));
+//     Changed by mmhmm to maintain the trailing slash in the URL
+//     This allows us to include our own path prefix when proxying requests
+//     The proxy will remove that prefix
+//     return new URL(stripTrailingSlash(url));
+	return new URL(url);
   }
 
   protected willProxy() {
